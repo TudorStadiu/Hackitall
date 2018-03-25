@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="com.example.tudor.foodhunt.Business_Login">
+
+
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="290dp"
+        app:srcCompat="@drawable/login_background" />
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="75dp"
+        android:id="@+id/text_email">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/txt_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="email" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/text_email"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="48dp"
+        android:id="@+id/text_password">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/txt_password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:hint="password" />
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:id="@+id/sign_in"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:background="#b30000"
+        android:textColor="#ffffff"
+        android:typeface="serif"
+        android:textSize="16dp"
+        android:layout_below="@+id/text_password"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="117dp"
+        android:text="Sign in" />
+
+    <Button
+        android:id="@+id/register"
+        android:layout_width="300dp"
+        android:layout_height="90dp"
+        android:background="#b30000"
+        android:textColor="#ffffff"
+        android:typeface="serif"
+        android:textSize="16dp"
+        android:layout_alignLeft="@+id/sign_in"
+        android:layout_alignStart="@+id/sign_in"
+        android:layout_below="@+id/sign_in"
+        android:layout_marginTop="42dp"
+        android:text="Do not have an account?
+Click here to register" />
+</RelativeLayout>
