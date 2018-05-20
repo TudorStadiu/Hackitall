@@ -22,10 +22,10 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:background="#000000"
+        android:text="Back"
+        android:textColor="#ffffff"
         android:textSize="20dp"
-        android:typeface="serif"
-        android:text="Log out"
-        android:textColor="#ffffff" />
+        android:typeface="serif" />
 
 
 </RelativeLayout>
