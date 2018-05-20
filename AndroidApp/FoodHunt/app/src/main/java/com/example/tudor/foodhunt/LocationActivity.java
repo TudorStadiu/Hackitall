@@ -357,19 +357,12 @@ class myThread implements Runnable {
 
 class auxMarker {
     String name;
-    String description;
     Double lat;
     Double lng;
-    String time;
-    Bitmap bmp;
-
-    public auxMarker(String name, String description, String time, Double lat, Double lng, Bitmap bmp) {
+    public auxMarker(String name, Double lat, Double lng) {
         this.name = name;
-        this.description = description;
-        this.time = time;
         this.lat = lat;
         this.lng = lng;
-        this.bmp = bmp;
     }
 }
 
@@ -464,7 +457,7 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
         log_out.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LocationActivity.this, MainActivity.class);
+                Intent intent = new Intent(LocationActivity.this, User_Login.class);
                 startActivity(intent);
             }
         });
@@ -497,8 +490,14 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
             Log.d("rip","locationManager");
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0, mLocationListener);
             Location curr = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            lat = curr.getLatitude();
-            lng = curr.getLongitude();
+            if(curr != null) {
+                lat = curr.getLatitude();
+                lng = curr.getLongitude();
+            }
+            else{
+                lat = 0d;
+                lng = 0d;
+            }
 
         }
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
@@ -522,71 +521,21 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
         mMap = googleMap;
 
-        final CountDownLatch latch = new CountDownLatch(1);
+        Vector<auxMarker> markers = new Vector<>();
 
-        final Vector<auxMarker>[] markers = new Vector[1];
+        FoodHunt foodHunt = new FoodHunt();
 
-        Thread uiThread = new HandlerThread("MapThread") {
-            Vector<Offer> offers;
-            @Override
-            public void run() {
-                Log.d("kys","1");
-                myThread mapsManager = new myThread();
-                offers = mapsManager.getOffers();
-                Log.d("kys","2");
-                markers[0] = new Vector<>();
-                if (offers != null) {
-                    for (final Offer o : offers) {
-                        Log.d("kys","3");
-                        String[] coord = o.location.split(":");
-                        double lat = Double.parseDouble(coord[0]);
-                        double lng = Double.parseDouble(coord[1]);
+        for(FoodHunt.MagazinMap magazinMap : foodHunt.getMagazine())
+            if(magazinMap.magazin == FoodHunt.Magazin.KAUFLAND)
+                markers.add(new auxMarker("Kaufland",magazinMap.latitude,magazinMap.longitude));
+            else
+                markers.add(new auxMarker("Carrefour",magazinMap.latitude,magazinMap.longitude));
 
-                        LatLng mark = new LatLng(lat, lng);
-
-                        int count = mapsManager.getDeviceCount(lat+":"+lng);
-                        String s = "";
-                        if(count <= 3)
-                            s = "uploads/3.png";
-                        else if(count <= 10)
-                            s = "uploads/2.png";
-                        else
-                            s = "uploads/1.png";
-
-                        Bitmap bmp = new myThread().getBitmap(s);
-
-                        if (bmp != null) {
-                            Log.d("kys","4");
-                            markers[0].add(new auxMarker(o.name,o.description,o.time,lat,lng,bmp));
-                        }
-                    }
-                } else Log.d("err", "null offers");
-
-                latch.countDown();
-            }
-        };
-        Log.d("kys","5");
-        uiThread.start();
-        try {
-            latch.await();
-        } catch (Exception e) {e.printStackTrace();}
-
-        Log.d("kys","6");
-        if(markers[0]!= null){
-            Log.d("kys","7");
-            for(auxMarker m : markers[0]){
-                String[] niceTime = m.time.split(" ")[1].split(":");
-
-                mMap.addMarker(new MarkerOptions().title(m.name)
-                        .position(new LatLng(m.lat,m.lng))
-                        .snippet(niceTime[0]+":"+niceTime[1])
-                        .icon(BitmapDescriptorFactory.fromBitmap(Bitmap.createScaledBitmap(m.bmp, 130, 200, false))))
-                        .setSnippet(m.description+" ("+niceTime[0]+":"+niceTime[1]+")");
-            }
-        } else Log.d("err", "ma dau batut");
+        for(auxMarker m : markers)
+                mMap.addMarker(new MarkerOptions().title(m.name).position(new LatLng(m.lat,m.lng)));
 
         LatLng latLng = new LatLng(lat, lng);
-        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 16);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);
         mMap.animateCamera(cameraUpdate);
 
     }

@@ -25,7 +25,10 @@ import java.util.UUID;
 
 public class User_Login extends AppCompatActivity {
 
-    Button guest_login;
+    Button search;
+    Button map;
+    Button products;
+
     LoginButton loginButton;
     CallbackManager callbackManager;
     String guest_id;
@@ -36,18 +39,27 @@ public class User_Login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user__login);
 
-        guest_login = (Button)findViewById(R.id.guest);
+        search = (Button)findViewById(R.id.guest);
+        map = (Button)findViewById(R.id.guest2);
+        products = (Button) findViewById(R.id.guest3);
 
-        guest_login.setOnClickListener(new View.OnClickListener() {
+        map.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Log.d("test","test");
-                SharedPreferences settings = getSharedPreferences("pref", MODE_PRIVATE);
-                SharedPreferences.Editor editor = settings.edit();
-                String uuid = UUID.randomUUID().toString();
-                uuid.replace("-","");
-                editor.putString("id", uuid);
-                editor.commit();
                 Intent screen2 = new Intent(User_Login.this, LocationActivity.class);
+                startActivity(screen2);
+            }
+        });
+
+        search.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent screen2 = new Intent(User_Login.this, user_base.class);
+                startActivity(screen2);
+            }
+        });
+
+        products.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent screen2 = new Intent(User_Login.this, viewProducts.class);
                 startActivity(screen2);
             }
         });
