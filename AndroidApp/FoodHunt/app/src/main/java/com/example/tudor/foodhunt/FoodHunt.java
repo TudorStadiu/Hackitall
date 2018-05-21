@@ -127,7 +127,7 @@ public class FoodHunt {
 
     private Vector<MagazinMap> magazine;
 
-    public FoodHunt() {
+    FoodHunt() {
         produseKaufland = new Vector<>();
         produseCarrefour = new Vector<>();
         toateProdusele = new Vector<>();
@@ -301,10 +301,6 @@ public class FoodHunt {
     }
 
     double distanceBetween(double lat1, double lng1, double lat2, double lng2){
-        double init =  Math.sqrt(Math.pow(lat1 - lat2,2) + Math.pow(lng1 - lng2,2));
-
-        double v1 = Math.toRadians(lat1);
-        double v2 = Math.toRadians(lat2);
 
         double dLat = Math.toRadians(lat2 - lat1);
         double dLng = Math.toRadians(lng2 - lng1);

@@ -9,6 +9,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.KeyCharacterMap;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -106,10 +108,9 @@ public class viewProducts extends AppCompatActivity {
             }
         });
 
-        searchView.setOnClickListener(new View.OnClickListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public void onClick(View v) {
-
+            public boolean onQueryTextSubmit(String query) {
                 switch (lastStore) {
                     case "Toate":
                         showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getToateProdusele())));
@@ -121,6 +122,23 @@ public class viewProducts extends AppCompatActivity {
                         showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getProduseCarrefour())));
                         break;
                 }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                switch (lastStore) {
+                    case "Toate":
+                        showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getToateProdusele())));
+                        break;
+                    case "Kaufland":
+                        showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getProduseKaufland())));
+                        break;
+                    case "Carrefour":
+                        showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getProduseCarrefour())));
+                        break;
+                }
+                return  true;
             }
         });
 
