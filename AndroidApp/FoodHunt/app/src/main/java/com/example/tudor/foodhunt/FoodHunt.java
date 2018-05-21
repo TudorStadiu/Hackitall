@@ -123,12 +123,15 @@ public class FoodHunt {
 
     private Vector<Product> produseKaufland;
     private Vector<Product> produseCarrefour;
+    private Vector<Product> toateProdusele;
 
     private Vector<MagazinMap> magazine;
 
     public FoodHunt() {
         produseKaufland = new Vector<>();
         produseCarrefour = new Vector<>();
+        toateProdusele = new Vector<>();
+
         magazine = new Vector<>();
 
         loadAllProductsFromServer();
@@ -202,6 +205,8 @@ public class FoodHunt {
         return produseCarrefour;
     }
 
+    Vector<Product> getToateProdusele(){ return  toateProdusele; }
+
     Vector<MagazinMap> getMagazine(){
         return magazine;
     }
@@ -213,6 +218,10 @@ public class FoodHunt {
             serverGetter.join();
             produseKaufland = serverGetter.produseKaufland.get();
             produseCarrefour = serverGetter.produseCarrefour.get();
+
+            toateProdusele.addAll(produseCarrefour);
+            toateProdusele.addAll(produseKaufland);
+
             magazine = serverGetter.magazine.get();
         } catch (Exception e) {
             e.printStackTrace();
