@@ -23,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -521,18 +522,30 @@ public class LocationActivity extends FragmentActivity implements OnMapReadyCall
 
         mMap = googleMap;
 
+        BitmapDescriptor icon_kaufland = BitmapDescriptorFactory.fromResource(R.drawable.kaufland);
+        BitmapDescriptor icon_carrefour = BitmapDescriptorFactory.fromResource(R.drawable.carrefour);
+
+
         Vector<auxMarker> markers = new Vector<>();
 
         FoodHunt foodHunt = new FoodHunt();
 
         for(FoodHunt.MagazinMap magazinMap : foodHunt.getMagazine())
-            if(magazinMap.magazin == FoodHunt.Magazin.KAUFLAND)
-                markers.add(new auxMarker("Kaufland",magazinMap.latitude,magazinMap.longitude));
-            else
-                markers.add(new auxMarker("Carrefour",magazinMap.latitude,magazinMap.longitude));
+            if(magazinMap.magazin == FoodHunt.Magazin.KAUFLAND) {
+                markers.add(new auxMarker("Kaufland", magazinMap.latitude, magazinMap.longitude));
+            }
+            else {
+                markers.add(new auxMarker("Carrefour", magazinMap.latitude, magazinMap.longitude));
+            }
 
-        for(auxMarker m : markers)
-                mMap.addMarker(new MarkerOptions().title(m.name).position(new LatLng(m.lat,m.lng)));
+        for(auxMarker m : markers) {
+            if(m.name.compareTo("Kaufland") == 0) {
+                mMap.addMarker(new MarkerOptions().title(m.name).position(new LatLng(m.lat, m.lng))/*.icon(icon_kaufland)*/);
+            } else if (m.name.compareTo("Carrefour") == 0) {
+                mMap.addMarker(new MarkerOptions().title(m.name).position(new LatLng(m.lat, m.lng))/*.icon(icon_carrefour)*/);
+            }
+
+        }
 
         LatLng latLng = new LatLng(lat, lng);
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 13);

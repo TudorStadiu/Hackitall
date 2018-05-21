@@ -123,12 +123,15 @@ public class FoodHunt {
 
     private Vector<Product> produseKaufland;
     private Vector<Product> produseCarrefour;
+    private Vector<Product> toateProdusele;
 
     private Vector<MagazinMap> magazine;
 
-    public FoodHunt() {
+    FoodHunt() {
         produseKaufland = new Vector<>();
         produseCarrefour = new Vector<>();
+        toateProdusele = new Vector<>();
+
         magazine = new Vector<>();
 
         loadAllProductsFromServer();
@@ -202,6 +205,8 @@ public class FoodHunt {
         return produseCarrefour;
     }
 
+    Vector<Product> getToateProdusele(){ return  toateProdusele; }
+
     Vector<MagazinMap> getMagazine(){
         return magazine;
     }
@@ -213,6 +218,10 @@ public class FoodHunt {
             serverGetter.join();
             produseKaufland = serverGetter.produseKaufland.get();
             produseCarrefour = serverGetter.produseCarrefour.get();
+
+            toateProdusele.addAll(produseCarrefour);
+            toateProdusele.addAll(produseKaufland);
+
             magazine = serverGetter.magazine.get();
         } catch (Exception e) {
             e.printStackTrace();
@@ -292,10 +301,6 @@ public class FoodHunt {
     }
 
     double distanceBetween(double lat1, double lng1, double lat2, double lng2){
-        double init =  Math.sqrt(Math.pow(lat1 - lat2,2) + Math.pow(lng1 - lng2,2));
-
-        double v1 = Math.toRadians(lat1);
-        double v2 = Math.toRadians(lat2);
 
         double dLat = Math.toRadians(lat2 - lat1);
         double dLng = Math.toRadians(lng2 - lng1);

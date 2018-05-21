@@ -160,20 +160,14 @@ public class user_base extends AppCompatActivity {
 
         editText = (EditText)findViewById(R.id.editText);
         search = (Button) findViewById(R.id.button3);
-        back = (Button) findViewById(R.id.button4);
+
         result = (TextView) findViewById(R.id.textView2);
 
         location();
 
         final FoodHunt foodHunt = new FoodHunt();
 
-        back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(user_base.this, User_Login.class);
-                startActivity(intent);
-            }
-        });
+
 
         search.setOnClickListener(new View.OnClickListener() {
             @Override
