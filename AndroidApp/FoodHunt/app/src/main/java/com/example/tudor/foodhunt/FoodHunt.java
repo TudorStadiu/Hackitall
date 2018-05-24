@@ -18,6 +18,7 @@ class ServerGetter extends Thread {
 
     AtomicReference<Vector<FoodHunt.Product>> produseKaufland = null;
     AtomicReference<Vector<FoodHunt.Product>> produseCarrefour = null;
+    AtomicReference<Vector<FoodHunt.Product>> produseLidl = null;
     AtomicReference<Vector<FoodHunt.MagazinMap>> magazine = null;
 
     private static String getUrlSource(String url) throws IOException {
@@ -39,6 +40,7 @@ class ServerGetter extends Thread {
     public void run() {
         Vector<FoodHunt.Product> produseKaufland = new Vector<>();
         Vector<FoodHunt.Product> produseCarrefour = new Vector<>();
+        Vector<FoodHunt.Product> produseLidl = new Vector<>();
         Vector<FoodHunt.MagazinMap> magazins = new Vector<>();
 
         try {
@@ -54,6 +56,9 @@ class ServerGetter extends Thread {
                             currentMagazin = FoodHunt.Magazin.KAUFLAND;
                         else if (product.startsWith("Carrefour"))
                             currentMagazin = FoodHunt.Magazin.CARREFOUR;
+                        else if (product.startsWith("Lidl"))
+                            currentMagazin = FoodHunt.Magazin.LIDL;
+
                         else {
                             String[] attributes = product.split(":::");
 
@@ -76,6 +81,8 @@ class ServerGetter extends Thread {
                                     produseKaufland.add(produs);
                                 else if (currentMagazin == FoodHunt.Magazin.CARREFOUR)
                                     produseCarrefour.add(produs);
+                                else if (currentMagazin == FoodHunt.Magazin.LIDL)
+                                    produseLidl.add(produs);
                             }
                         }
                     }
@@ -87,6 +94,7 @@ class ServerGetter extends Thread {
 
         this.produseKaufland = new AtomicReference<>(produseKaufland);
         this.produseCarrefour = new AtomicReference<>(produseCarrefour);
+        this.produseLidl = new AtomicReference<>(produseLidl);
 
         try {
             String rawData = getUrlSource("http://foodhunt.ro/getters/magazineGetter.php");
@@ -104,6 +112,9 @@ class ServerGetter extends Thread {
                     else if (attributes[0].startsWith("Carrefour"))
                         current = FoodHunt.Magazin.CARREFOUR;
 
+                    else if (attributes[0].startsWith("Lidl"))
+                        current = FoodHunt.Magazin.LIDL;
+
                     //nume,lat,lng
                     FoodHunt.MagazinMap magazinMap = new FoodHunt.MagazinMap(current, Double.parseDouble(attributes[1]), Double.parseDouble(attributes[2]));
                     magazins.add(magazinMap);
@@ -119,10 +130,11 @@ class ServerGetter extends Thread {
 
 public class FoodHunt {
 
-    enum Magazin {KAUFLAND, CARREFOUR}
+    enum Magazin {KAUFLAND, CARREFOUR, LIDL}
 
     private Vector<Product> produseKaufland;
     private Vector<Product> produseCarrefour;
+    private Vector<Product> produseLidl;
     private Vector<Product> toateProdusele;
 
     private Vector<MagazinMap> magazine;
@@ -130,6 +142,7 @@ public class FoodHunt {
     FoodHunt() {
         produseKaufland = new Vector<>();
         produseCarrefour = new Vector<>();
+        produseLidl = new Vector<>();
         toateProdusele = new Vector<>();
 
         magazine = new Vector<>();
@@ -195,6 +208,17 @@ public class FoodHunt {
         public String toString(){
             return name + ", "+quanity + ", " + pretNou + " lei";
         }
+
+        public boolean equals(Object o){
+            if(o == null)
+                return false;
+
+            if(o instanceof Product)
+                if(((Product) o).pretNou == this.pretNou)
+                    return true;
+
+            return false;
+        }
     }
 
     Vector<Product> getProduseKaufland(){
@@ -204,6 +228,8 @@ public class FoodHunt {
     Vector<Product> getProduseCarrefour(){
         return produseCarrefour;
     }
+
+    Vector<Product> getProduseLidl(){ return produseLidl; }
 
     Vector<Product> getToateProdusele(){ return  toateProdusele; }
 
@@ -218,9 +244,11 @@ public class FoodHunt {
             serverGetter.join();
             produseKaufland = serverGetter.produseKaufland.get();
             produseCarrefour = serverGetter.produseCarrefour.get();
+            produseLidl = serverGetter.produseLidl.get();
 
             toateProdusele.addAll(produseCarrefour);
             toateProdusele.addAll(produseKaufland);
+            toateProdusele.addAll(produseLidl);
 
             magazine = serverGetter.magazine.get();
         } catch (Exception e) {
@@ -279,25 +307,41 @@ public class FoodHunt {
         //search in all stores
         Vector<Product> prodKaufland = searchProduct(search,produseKaufland);
         Vector<Product> prodCarrefour = searchProduct(search,produseCarrefour);
+        Vector<Product> prodLidl = searchProduct(search,produseLidl);
         //get store with best product
         Product bestKaufland = lowestPrice(prodKaufland);
         Product bestCarrefour = lowestPrice(prodCarrefour);
-
+        Product bestLidl = lowestPrice(prodLidl);
         //avoid exceptions
         if(bestKaufland == null)
-            if(bestCarrefour == null)
-                return null;
-            else
-                return new Tuple(getClosestStore(Magazin.CARREFOUR,lat,lng),bestCarrefour);
+            bestKaufland = new Product("","","","",Float.MAX_VALUE,Float.MAX_VALUE);
 
         if(bestCarrefour == null)
-            return new Tuple(getClosestStore(Magazin.KAUFLAND,lat,lng),bestKaufland);
+            bestCarrefour = new Product("","","","",Float.MAX_VALUE,Float.MAX_VALUE);
 
-        //normal logic
-        if(bestKaufland.pretNou < bestCarrefour.pretNou)
-            return new Tuple(getClosestStore(Magazin.KAUFLAND,lat,lng),bestKaufland);
+        if(bestLidl == null)
+            bestLidl = new Product("","","","",Float.MAX_VALUE,Float.MAX_VALUE);
 
-        return new Tuple(getClosestStore(Magazin.CARREFOUR,lat,lng),bestCarrefour);
+        Vector<Product> aux = new Vector<>();
+        aux.add(bestCarrefour);
+        aux.add(bestLidl);
+        aux.add(bestKaufland);
+
+        Product best = lowestPrice(aux);
+
+        if(best.pretNou == Float.MAX_VALUE)
+            return null;
+
+        if(best.equals(bestCarrefour))
+            return new Tuple(getClosestStore(Magazin.CARREFOUR,lat,lng),best);
+
+        if(best.equals(bestKaufland))
+            return new Tuple(getClosestStore(Magazin.KAUFLAND,lat,lng),best);
+
+        if(best.equals(bestLidl))
+            return new Tuple(getClosestStore(Magazin.LIDL,lat,lng),best);
+
+        return null;
     }
 
     double distanceBetween(double lat1, double lng1, double lat2, double lng2){
