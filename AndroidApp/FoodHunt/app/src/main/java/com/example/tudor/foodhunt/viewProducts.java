@@ -38,23 +38,24 @@ public class viewProducts extends AppCompatActivity {
         Spinner spinner = (Spinner) findViewById(R.id.spinner1);
         Spinner stores = (Spinner) findViewById(R.id.spinner);
         final FoodHunt foodHunt = new FoodHunt();
-        final SearchView searchView = (SearchView)findViewById(R.id.searchView);
+        final SearchView searchView = (SearchView) findViewById(R.id.searchView);
 
         Vector<String> categories = foodHunt.getCategories(foodHunt.getProduseKaufland());
-        categories.add(0,"Toate");
+        categories.add(0, "Toate");
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,categories);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, categories);
         spinner.setAdapter(adapter);
 
         categories = new Vector<>();
         categories.add("Toate");
         categories.add("Kaufland");
         categories.add("Carrefour");
+        categories.add("Lidl");
 
-        adapter = new ArrayAdapter<>(this,R.layout.support_simple_spinner_dropdown_item,categories);
+        adapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, categories);
         stores.setAdapter(adapter);
 
-        showProducts(tableLayout,foodHunt.getProduseKaufland());
+        showProducts(tableLayout, foodHunt.getProduseKaufland());
 
         lastStore = "Toate";
         lastCategory = "Toate";
@@ -64,7 +65,20 @@ public class viewProducts extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 lastCategory = parent.getItemAtPosition(position).toString();
-                showProducts(tableLayout,foodHunt.findAllCategory(parent.getItemAtPosition(position).toString(),foodHunt.getProduseKaufland()));
+                switch (lastStore) {
+                    case "Toate":
+                        showProducts(tableLayout, foodHunt.findAllCategory(parent.getItemAtPosition(position).toString(), foodHunt.getToateProdusele()));
+                        break;
+                    case "Kaufland":
+                        showProducts(tableLayout, foodHunt.findAllCategory(parent.getItemAtPosition(position).toString(), foodHunt.getProduseKaufland()));
+                        break;
+                    case "Carrefour":
+                        showProducts(tableLayout, foodHunt.findAllCategory(parent.getItemAtPosition(position).toString(), foodHunt.getProduseCarrefour()));
+                        break;
+                    case "Lidl":
+                        showProducts(tableLayout, foodHunt.findAllCategory(parent.getItemAtPosition(position).toString(), foodHunt.getProduseLidl()));
+                        break;
+                }
             }
 
             @Override
@@ -80,6 +94,9 @@ public class viewProducts extends AppCompatActivity {
                     case "Carrefour":
                         showProducts(tableLayout, foodHunt.getProduseCarrefour());
                         break;
+                    case "Lidl":
+                        showProducts(tableLayout, foodHunt.getProduseLidl());
+                        break;
                 }
             }
         });
@@ -90,13 +107,16 @@ public class viewProducts extends AppCompatActivity {
                 lastStore = parent.getItemAtPosition(position).toString();
                 switch (lastStore) {
                     case "Toate":
-                        showProducts(tableLayout,foodHunt.findAllCategory(lastCategory,foodHunt.getToateProdusele()));
+                        showProducts(tableLayout, foodHunt.findAllCategory(lastCategory, foodHunt.getToateProdusele()));
                         break;
                     case "Kaufland":
-                        showProducts(tableLayout,foodHunt.findAllCategory(lastCategory,foodHunt.getProduseKaufland()));
+                        showProducts(tableLayout, foodHunt.findAllCategory(lastCategory, foodHunt.getProduseKaufland()));
                         break;
                     case "Carrefour":
-                        showProducts(tableLayout,foodHunt.findAllCategory(lastCategory,foodHunt.getProduseCarrefour()));
+                        showProducts(tableLayout, foodHunt.findAllCategory(lastCategory, foodHunt.getProduseCarrefour()));
+                        break;
+                    case "Lidl":
+                        showProducts(tableLayout, foodHunt.findAllCategory(lastCategory, foodHunt.getProduseLidl()));
                         break;
                 }
             }
@@ -104,7 +124,7 @@ public class viewProducts extends AppCompatActivity {
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 lastStore = "Toate";
-                showProducts(tableLayout,foodHunt.findAllCategory(lastCategory,foodHunt.getProduseKaufland()));
+                showProducts(tableLayout, foodHunt.findAllCategory(lastCategory, foodHunt.getToateProdusele()));
             }
         });
 
@@ -113,13 +133,16 @@ public class viewProducts extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 switch (lastStore) {
                     case "Toate":
-                        showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getToateProdusele())));
+                        showProducts(tableLayout, foodHunt.searchProduct(searchView.getQuery().toString(), foodHunt.findAllCategory(lastCategory, foodHunt.getToateProdusele())));
                         break;
                     case "Kaufland":
-                        showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getProduseKaufland())));
+                        showProducts(tableLayout, foodHunt.searchProduct(searchView.getQuery().toString(), foodHunt.findAllCategory(lastCategory, foodHunt.getProduseKaufland())));
                         break;
                     case "Carrefour":
-                        showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getProduseCarrefour())));
+                        showProducts(tableLayout, foodHunt.searchProduct(searchView.getQuery().toString(), foodHunt.findAllCategory(lastCategory, foodHunt.getProduseCarrefour())));
+                        break;
+                    case "Lidl":
+                        showProducts(tableLayout, foodHunt.searchProduct(searchView.getQuery().toString(), foodHunt.findAllCategory(lastCategory, foodHunt.getProduseLidl())));
                         break;
                 }
                 return true;
@@ -129,16 +152,19 @@ public class viewProducts extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 switch (lastStore) {
                     case "Toate":
-                        showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getToateProdusele())));
+                        showProducts(tableLayout, foodHunt.searchProduct(searchView.getQuery().toString(), foodHunt.findAllCategory(lastCategory, foodHunt.getToateProdusele())));
                         break;
                     case "Kaufland":
-                        showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getProduseKaufland())));
+                        showProducts(tableLayout, foodHunt.searchProduct(searchView.getQuery().toString(), foodHunt.findAllCategory(lastCategory, foodHunt.getProduseKaufland())));
                         break;
                     case "Carrefour":
-                        showProducts(tableLayout,foodHunt.searchProduct(searchView.getQuery().toString(),foodHunt.findAllCategory(lastCategory,foodHunt.getProduseCarrefour())));
+                        showProducts(tableLayout, foodHunt.searchProduct(searchView.getQuery().toString(), foodHunt.findAllCategory(lastCategory, foodHunt.getProduseCarrefour())));
+                        break;
+                    case "Lidl":
+                        showProducts(tableLayout, foodHunt.searchProduct(searchView.getQuery().toString(), foodHunt.findAllCategory(lastCategory, foodHunt.getProduseLidl())));
                         break;
                 }
-                return  true;
+                return true;
             }
         });
 
@@ -152,15 +178,15 @@ public class viewProducts extends AppCompatActivity {
 
     }
 
-    void showProducts(TableLayout tableLayout,Vector<FoodHunt.Product> products){
+    void showProducts(TableLayout tableLayout, Vector<FoodHunt.Product> products) {
         tableLayout.removeAllViews();
-        for(FoodHunt.Product product : products) {
+        for (FoodHunt.Product product : products) {
 
             final TableRow tableRow = new TableRow(this);
             tableRow.setLayoutParams(new TableLayout.LayoutParams(TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT));
 
             final TextView text = new TextView(this);
-            text.setText(product.toString().replace("&quot",""));
+            text.setText(product.toString().replace("&quot", ""));
             text.setTextSize(15);
             text.setLayoutParams(new TableRow.LayoutParams(TableRow.LayoutParams.WRAP_CONTENT, TableRow.LayoutParams.WRAP_CONTENT));
 

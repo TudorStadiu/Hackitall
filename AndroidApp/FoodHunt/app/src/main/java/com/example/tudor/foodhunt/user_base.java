@@ -146,8 +146,12 @@ public class user_base extends AppCompatActivity {
             Log.d("rip","locationManager");
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 0, mLocationListener);
             Location curr = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            lat = curr.getLatitude();
-            lng = curr.getLongitude();
+            lat = 0d;
+            lng = 0d;
+            if(curr != null) {
+                lat = curr.getLatitude();
+                lng = curr.getLongitude();
+            }
 
         }
 
